@@ -1,0 +1,814 @@
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm,thm-restate}
+\usepackage[hidelinks]{hyperref}
+\usepackage[capitalize]{cleveref}
+\usepackage{mathtools}
+\usepackage{mathrsfs}
+\usepackage{microtype}
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc} 
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{corollary}[theorem]{Corollary}
+\newtheorem{conjecture}{Conjecture}
+\newtheorem{lemma}{Lemma}
+\newtheorem{claim}{Claim}[theorem]
+\newtheorem{observation}{Observation}
+\theoremstyle{definition}
+\newtheorem{definition}{Definition}
+
+
+\usepackage{xcolor}
+\usepackage[textsize=tiny]{todonotes}
+\newcommand{\CC}{{\mathscr C}}
+\newcommand{\DD}{{\mathscr D}}
+\newcommand{\BB}{{\mathscr B}}
+\newcommand{\QQ}{{\mathcal Q}}
+\newcommand{\PP}{{\mathcal P}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\jan}[1]{\begin{janin}#1\end{janin}}
+% \newcommand{\janin}[1]{\todo[inline,size=\normalsize,color=orange!40,caption={}]{Jan: #1}}
+\newcommand{\niko}[1]{\todo[color=green!40]{Niko: #1}}
+\newcommand{\nikoin}[1]{\todo[inline,size=\normalsize,color=green!40,caption={}]{Niko: #1}}
+\newcommand{\szym}[1]{\todo[color=blue!40]{Szymon: #1}}
+\newcommand{\szymin}[1]{\begin{szin}#1\end{szin}}
+\newcommand{\mipi}[1]{\todo[color=pink!40]{Michał: #1}}
+\newcommand{\mipiin}[1]{\todo[inline,size=\normalsize,color=pink!40,caption={}]{Michał: #1}}
+\newcommand{\rose}[1]{\todo[color=purple!40]{Rose: #1}}
+\newcommand{\RMM}[1]{\begin{RMMin}#1\end{RMMin}}
+
+\newcommand{\eps}{\varepsilon}
+\newcommand{\Oh}{\mathcal{O}}
+\newcommand{\inAppendix}{$\clubsuit$}%RMM ADDED
+\newcommand{\inducedSS}[2]{#1/#2}%RMM ADDED
+
+\renewcommand{\leq}{\leqslant}
+\renewcommand{\le}{\leqslant}
+\renewcommand{\geq}{\geqslant}
+\renewcommand{\ge}{\geqslant}
+\renewcommand{\subset}{\subseteq}
+\newcommand{\set}[1]{\{#1\}}
+\newcommand{\setof}[2]{\set{#1 \,|\, #2 }}
+\newcommand{\from}{\colon}
+\newcommand{\res}[1]{{\downharpoonright}_{#1}}
+\renewcommand{\cal}{\mathcal}
+\DeclareMathOperator{\VCdim}{VCdim}
+\DeclareMathOperator{\polylog}{polylog}
+\DeclareMathOperator{\poly}{poly}
+\DeclareMathOperator{\subpoly}{subpoly}
+
+% More compact itemizes
+\usepackage{enumitem}
+\setlist[itemize]{topsep=4pt,itemsep=3pt,parsep=0pt} 
+\setlist[enumerate]{topsep=4pt,itemsep=3pt,parsep=0pt}
+\setlist[description]{topsep=4pt,itemsep=3pt,parsep=0pt} 
+
+\usepackage{comment}
+\usepackage{tcolorbox}
+\tcbuselibrary{skins,breakable}
+
+\newif\ifcomments
+\commentstrue        % set to \commentsfalse to hide all comments
+
+\newlength{\NormalParindent}
+\newlength{\NormalParskip}
+\AtBeginDocument{%
+  \setlength{\NormalParindent}{\parindent}%
+  \setlength{\NormalParskip}{\parskip}%
+}
+
+\newcommand{\createCommentEnv}[3]{%
+  \ifcomments
+     \newtcolorbox{#1}{
+      breakable, enhanced,
+      colback=#3!10,
+      colframe=#3,
+      boxrule=1pt,
+      borderline west={2pt}{0pt}{#3},
+      left=10pt,right=10pt,top=5pt,bottom=5pt,
+      boxsep=0pt,      
+      before skip=\NormalParskip,
+      after skip=\NormalParskip,      
+      title={\bfseries #2:},
+      % stick out into margins:
+      width=\dimexpr\linewidth+10pt\relax,
+      left skip=-10pt,
+      % keep normal paragraph formatting:
+      before upper={
+        \setlength{\parindent}{\NormalParindent}
+        \setlength{\parskip}{\NormalParskip}
+      },
+    }%
+  \else
+    \excludecomment{#1}%
+  \fi
+}
+
+
+\createCommentEnv{szin}{Sz}{red}
+\createCommentEnv{janin}{Jan}{green}
+\createCommentEnv{RMMin}{RMM}{orange}
+\createCommentEnv{claudein}{Claude}{cyan}
+\newcommand{\claude}[1]{\begin{claudein}#1\end{claudein}}
+\createCommentEnv{oldin}{Old}{gray}
+\newcommand{\old}[1]{\begin{oldin}#1\end{oldin}}
+\createCommentEnv{newin}{New}{green!50!black}
+\newcommand{\new}[1]{\begin{newin}#1\end{newin}}
+
+
+\let\phi\varphi
+\let\epsilon\varepsilon
+\newcommand{\Pp}{\mathcal{P}}
+\newcommand{\Qq}{\mathcal{Q}}
+\newcommand{\Ll}{\mathcal L}
+\newcommand{\Dom}{\text{Dom}}
+\newcommand{\remph}[1]{{\color{red} \emph{#1}}}
+\newcommand{\Aug}{\text{Aug}}
+\newcommand{\tf}{\leqslant_{\text{tf}}}
+\newcommand{\Tcl}{\text{T-cl}}
+\newcommand{\hamming}{\mathrm{Hamming}}
+
+% %%% LEFTBAR BEGIN %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% \usepackage{framed}
+% %https://tex.stackexchange.com/questions/50612/alignment-in-the-leftbar-environment-is-rightbar-possible
+% \newlength{\leftbarwidth}
+% \setlength{\leftbarwidth}{3pt}
+% \newlength{\leftbarsep}
+% \setlength{\leftbarsep}{10pt}
+
+% \renewenvironment{leftbar}[1][blue]
+% {%
+% \def\FrameCommand
+% {%
+% {\hspace{-8pt} \color{#1} \vrule width 3pt}%
+% \hspace{0pt}%must no space.
+% \fboxsep=\FrameSep\colorbox{#1!5!}%
+% }%
+% \MakeFramed{\hsize\hsize\advance\hsize-\width\FrameRestore}%
+% }
+% {\endMakeFramed}
+% \setlength{\FrameSep}{5pt}
+% %%% LEFTBAR END %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+% \makeatletter
+% %define \szin environment, which which ignores its content if todonotes is used with "disabled" option, and shows a comment otherwise
+
+% \newcommand{\createCommentEnv}[2]{%
+%   \if@todonotes@disabled
+%     \excludecomment{#1}%
+%   \else
+%     \newenvironment{#1}{\begin{leftbar}[#2]{\noindent\bf}}{\end{leftbar}}%
+%   \fi
+% }
+% \makeatother
+
+% \createCommentEnv{szin}{red}
+% \createCommentEnv{janin}{blue}
+% \createCommentEnv{RMM}{orange}
+
+%   \if@todonotes@disabled % Check todnotes is used with disabled option
+%   \excludecomment{szin}
+%   \excludecomment{janin}
+%   \excludecomment{RMM}
+%   \else %todonotes enabled
+%   \newenvironment{szin}{\begin{leftbar}[red]{\noindent\bf sz: }}{\end{leftbar}}
+%   \newenvironment{RMM}{\begin{leftbar}[orang]{\noindent\bf sz: }}{\end{leftbar}}
+%   \fi
+%   \if@todonotes@disabled % Check todnotes is used with disabled option
+%   \excludecomment{janin}
+%   \else %todonotes enabled
+%   \newenvironment{janin}{\begin{leftbar}[blue]{\noindent\bf Jan: }}{\end{leftbar}}
+%   \fi
+
+% \makeatother
+
+\begin{document}
+
+\title{Neighborhood Complexity and Dense Analogue of Bounded Expansion}
+\date{}
+\maketitle
+
+\section{Definitions}
+
+\subsection{Transductions}
+Given two languages $\Ll$ and $\Ll'$,
+an \remph{interpretation from $\Ll$ to $\Ll'$} is
+a family $(\varphi_r)_{r \in \text{relations}(\Ll')}$ of $\Ll$-formulae where $\varphi_r$ has as many free variables as the arity of $r$ plus a formula $\varphi_{\Dom}$ with a single free variable.
+If $S$ is a $\Ll$-structure, then \remph{$I(S)$} is the $\Ll'$-structure obtained by taking $D := \{x \in \Dom(S)~:~S \models \varphi_{\Dom}(x)\}$ as domain, and for each relational symbol $r$ of $\Ll'$, the set of tuples
+$\{\overline x \in D~:~S \models \varphi_r(\overline x)\}$. 
+
+Given $I$ an interpretation from $\Ll$ to $\Ll'$,
+and $J$ an interpretation from $\Ll'$ to $\Ll''$, the \remph{composition $J \circ I$} is the interpretation from $\Ll$ to $\Ll''$ obtained by substituing each relation $r$ in a formula of $J$ by the associated formula $\varphi_r$ of $I$.
+
+The \remph{$k$-augmentation} of a language $\Ll$ is the language
+$\Ll^k := \Ll \cup \{U_1, \dots, U_k\}$ where each $U_i$ is a new symbol of unary relation.
+An $\Ll$-structure $S$ naturaly give raise to a set \remph{$\Aug_k(S)$} of $\Ll^k$-structures by adding all the possible $k$-unary relations on $S$.
+
+The \remph{$c$-copy} of a language $L$, denoted $(\Ll + c)$ is the language obtained by adding a single $c$-ary relation $R_c$ to $\Ll$.
+An $\Ll$-structure $S$ translate in the $(\Ll + c)$-structure $(S + c)$ by taking $c$ disjoint unions of $S$, and taking for $R_c$ all the tuples $(x_1, \ldots, x_c)$ made of the $c$ copies of a same element of $S$.
+
+Finally, for two languages $\Ll$ and $\Ll'$, two integers $c$ and $k$, and an interpretation $I$ from $(\Ll + c)^k$ to $\Ll'$, a \remph{$(c, k, I)$-transduction} $T$ is the operation that takes as input an $\Ll$ structure $S$ and returns $I(\Aug_k(S + c))$.
+
+A class of $\Ll'$ structures $\DD$ is \remph{transducable from} a class of $\Ll$ structures $\CC$ when there exists a $(c, k, I)$-transduction $T$ such that $\DD \subseteq  T(\CC) := \cup_{S \in \CC} T(S)$.
+We will denote this by $\DD \tf \CC$, and it can be observed that $\tf$ is indeed a partial order. Finally one can note that, if $\text{cl}(\CC)$ is the hereditary closure of $\CC$, we have $\text{cl}(C) \tf \CC$.
+The \remph{complexity} of a $(c, k, I)$-transduction $T$ is the maximum among $c$, $k$, and the quantifier rank of $T$.
+When a transduction has complexity $\le k$, we call it a \remph{$k$-transduction}.
+It is well-known that the number of different $k$-transductions is finite (depending on $k$).
+
+Given a class $\CC$ of $\CC$, we define the \remph{closure by transduction} of $\CC$, denoted by $\Tcl(\CC)$, as the set of classes $\DD$ with $\DD \tf \CC$.
+This paper is dedicated to understanding some set of transduction closed sets.
+
+\begin{definition}
+A class $\CC$ is Dependent we have $\mathcal G \not \tf \CC$ for $\mathcal G$ the class of all graphs.
+\end{definition}
+
+\begin{definition}
+The Dense Analogue of Bounded Expansion (DABE) is the set of classes of graphs $\CC$ such that, for any non degenerate sparse class $\DD$, we have $\DD \not \tf \CC$.
+\end{definition}
+It is known that the classes that are both sparse and in DABE are the classes of bounded expansion.
+ 
+Note that DABE can be extended to any class of structures.
+The \remph{Analogue of Bounded Expansion (ABE)} is the set of classes $\CC$ such that, for any non degenerate sparse class $\DD$, we have $\DD \not \tf \CC$.
+We will in particular be interested in set-systems in ABE.
+
+\subsection{Type complexity}
+\newcommand{\nc}{\text{nc}}
+\newcommand{\tc}{\text{tc}}
+The \remph{neighborhood complexity} of a class of graph $\CC$ is the function $\nc_{\CC} : \N \to \N$ defined by:
+\[
+nc_{\CC}(n) := \max_{G \in \CC} \max_{A \subseteq V(G), |A| = n} |\{ N(v) \cap A~|~v \in V(G)\}|
+\]
+For any integer $k$, we define the \remph{k-type complexity }$\tc_{\CC}(k, \cdot) : \N \to \N$ as the maximum among the neighborhood complexities of the classes obtained from $\CC$ by application of a $k$-transduction.
+
+\[
+tc_{\CC}(k, n) := \max_{T \text{ a $k$-transduction}} \nc_{T(\CC)}(n)
+\]
+
+Note that the finiteness of the set of $k$-transductions allows $\tc$ to always be well-defined.
+We say that the class $\CC$ has \remph{linearity} $c$ if $\nc(n) \le c \cdot n$ for any positive $n$. Similarly, it has \remph{$k$-translinearity} $c$ if $\tc(k, n) \le c \cdot n$ for any positive $n$.
+
+A class of graph is \remph{translinear} when its $k$-translinearity is finite for any $k$.
+The main goal of this paper is to prove the following theorem.
+
+\begin{theorem}
+  A class $\CC$ is translinear if and only if it is in DABE.
+\end{theorem}
+
+Note that the left-to-right implication result from a combination of the following known theorems.
+
+\begin{theorem}\label{thm:bddexp2nc}
+  A sparse class of graphs has bounded expansion, it has linear neighborhood complexity.
+\end{theorem}
+
+\begin{lemma}\label{lem:dreier-sampling-lin}
+Let $G = (A, B, E)$ be a bipartite graph with no isolated vertices, with $|B| \ge |A|$, that is $d$-degenerate.
+Then there are $A' \subseteq A$ and $B' \subseteq B$ with $|B'| \ge c_{\ref{lem:dreier-sampling-lin}}(d) \cdot |B|$ such that each vertex in $B'$ has exactly one vertex in $A$.
+\end{lemma}
+\begin{proof}
+Since $G$ is $d$-degenerate, it contains at most $d \cdot (|A| + |B|)$ edges. 
+Since $|B| \ge |A|$, the average degree of vertices in $B$ is $\le 2 d \cdot (|A| + |B|) / |B| = 4d$.
+In particular, at least $|B|/2$ vertices in $B$ have degree at most $8d$.
+Let $B' \subset B$ the set of vertices in $B$ of degree at most $8d$.
+
+Let $X$ be a subset of $A$ taken at random, where each vertex $a \in A$ belongs to $X$ with probability $1/8d$.
+For each $b \in B'$, let $E_b$ the event ``$b$ has exactly one neighbor in $X$''.
+The probability $\mathbb{P}(E_b)$ is $\text{deg}(b) \cdot 1/8d \cdot (7/8d)^{\text{deg}(b) - 1}$ with $\text{deg}(b)$ the degree of $b$, hence $\mathbb{P}(E_b) \ge c_d := (1/8d)^{8d}$.
+In particular, the expectancy of the number of vertices of $B'$ with exactly one neighbor in $X$ is $|B'| \cdot \mathbb{P}(E_b)$.
+Hence, there exists $A' \subset A$ such that at least $c_d \cdot |B'| \ge c_d/2 \cdot |B|$ vertices of $B$ have exactly one neighbor in~$A'$.
+
+\end{proof}
+\section{Proof of the key lemma}
+
+
+A partition $\mathcal P$ of the vertex set of a graph $G$ is \remph{$k$-definable} if there exists a $k$-coloring of $G$, and a formula $\phi$ of quantifier rank at most $k$ such that $G, x, y \models \phi(x, y)$ if and only if $x$ and $y$ are in the same part of $\mathcal P$.
+
+Given a graph $G$ and two $k$-definable partitions $\mathcal P$ and $\mathcal Q$ of $V(G)$, their \remph{intersection graph} $\text{Inter}(\mathcal P, \mathcal Q)$ is the graph with vertex set $\{p \in \mathcal P\} \uplus \{q \in \mathcal Q\} \uplus \{(p,q) ~:~ p \in P, q \in Q, p \cap q \neq \emptyset\}$ and edges between any pair $(p, q)$ and its two components $p$ and $q$.
+The set of vertices $\{(p,q) ~:~ p \in P, q \in Q, p \cap q \neq \emptyset\}$ is the \emph{common refinement of $\mathcal P$ and $\mathcal Q$} denoted $P \wedge Q$.
+
+
+
+\begin{lemma}\label{lem:transInter}
+    Let $G$ be a graph, and let $\mathcal P$ and $\mathcal Q$ be two $k$-definable partitions on $V(G)$. Then $\text{Inter}(\Pp , \Qq)$ is transducable from $G$ by a transduction whose complexity depends only on $k$.
+\end{lemma}
+\begin{proof}
+
+Let $\phi_P$ the formula of quantifier rank $\leq k$ defining $\mathcal P$, and a choice $U_1^P, \ldots, U_k^P$ for the $k$ unary predicate it may use; let $\phi_Q$ and $U_j^Q$ be the analogous data for $\mathcal Q$.
+
+Consider the $3$-copy structure $(G+3)$ with copies $V^{(1)}, V^{(2)}, V^{(3)}$, and augment it as follows: add the unary predicates $U_j^P$ and $U_j^Q$ for each $j \in [k]$ on the first copy; a predicate $\mathrm{Rep}_P$ picking one representative per $\mathcal P$-class in $V^{(1)}$; a predicate $\mathrm{Rep}_Q$ picking one representative per $\mathcal Q$-class in $V^{(2)}$; and a predicate $\mathrm{Rep}_{PQ}$ picking a representative in $V^{(3)}$ for each non-empty $p \cap q$ with $p \in \mathcal P$ and $q \in \mathcal Q$.
+
+The three colors of the representatives allows us to find the good ground-set for the transduction. Now it remains to define the edges between these representatives.
+In order to do this, it suffices to add edges $xy$ that satisfy expressions of the form $\mathrm{Rep}_{P}(x) \wedge \mathrm{Rep}_{PQ}(y) \wedge \phi_P(x, y)$ and the symmetric variants.
+\end{proof}
+
+This will allow us to prove the following central tool of this paper.
+
+\begin{corollary}\label{cor:2equiv_ref}
+    Let $\CC$ be a class in the DABE.
+    Let $G \in \CC$ and $\Pp$ and $\Qq$ two $k$-definable partitions on $V(G)$.
+    There exists a constant $c$ depending only on $\CC$ and $k$ such that $|\Qq \wedge \Pp| \le c \cdot (|\Pp| + |\Qq|)$.
+\end{corollary}
+\begin{proof}
+$\text{Inter}(\Pp, \Qq)$ is bipartite between $A := \Pp \wedge \Qq$ and $B := \Pp \uplus \Qq$. In addition, every $A$-vertex has degree exactly~$2$, and any two vertices of $A$ have different neighborhoods in $B$. The class $\{H_G := \text{Inter}(\Pp,\Qq) : G \in \CC\}$ is weakly sparse and in the DABE, hence of bounded expansion.
+
+By [TODO] classes of bounded expansion have linear neighborhood complexity, hence there exists a constant $c$ such that, for any $G \in \CC$, $|A| \le c \cdot |B|$, completing the proof.
+\end{proof}
+
+\section{Linear Neighborhood Complexity for DABE Classes}
+\label{sec:nc-dabe}
+
+In this section we prove that every class in DABE has \emph{linear} neighborhood complexity.
+
+\subsection{Preliminaries}
+
+Any bipartite graph $G=(A,B,E)$ induces a \remph{set system} $\inducedSS{B}{A} := \setof{N(b)\cap A}{b\in B}$ on $A$.
+For $A'\subseteq A$ and $B'\subseteq B$ we write $\inducedSS{B'}{A'}$ for the set system $\setof{N(b)\cap A'}{b\in B'}$ on $A'$. Given a set-system $\cal F$ on $V$, and $X \subseteq V$ we will write \remph{$\cal F\res X$} for its restriction to $X$.
+Two vertices of $B$ are \remph{twins} if they have equal neighborhoods in $A$; $|\inducedSS{B}{A}|=|B|$ iff $B$ contains no twins.
+
+The \remph{VC-dimension} of a set system $\cal F$ on $V$ is the largest $|X|$ for $X\subseteq V$ with $\cal F\res X=2^X$ (and $-\infty$ if $\cal F=\emptyset$).
+We write $\VCdim(G)$ for $\VCdim(\inducedSS{V(G)}{V(G)})$.
+Let $v\in V$. Sets $A,B\in\cal F$ form a \remph{$v$-pair} if $A\triangle B=\set{v}$.
+If $A$ belongs to some $v$-pair it is \remph{$v$-positive} if $v\in A$, \remph{$v$-negative} otherwise.
+Given $G=(A,B,E)$, the \remph{positive} (resp.\ \remph{negative}) \remph{merge graph} of $G$ is the bipartite graph with parts $A$ and $\inducedSS{B}{A}$ where $a\in A$ is adjacent to $F\in \inducedSS{B}{A}$ iff $F$ is $a$-positive (resp.\ $a$-negative).
+
+
+\begin{lemma}\label{lem:dabe-bounded-vc}
+Every monadically dependent class has bounded VC-dimension.
+\end{lemma}
+
+\begin{lemma}\label{lem:VC-dim2deg}
+The hamming graph of a set-system $\cal F$ of VC-dimension $d$ has at most $d |\cal F|$ edges.  
+\end{lemma}
+
+\begin{corollary}\label{cor:hamming}
+Let $\cal F$ be a set-system of VC-dimension $d$, whose hamming graph $H$ has at most $m$ edges. Then $H$ has at least $m/d$ non-isolated vertices.
+\end{corollary}
+
+\begin{lemma}[VC-dimension induction]\label{lem:VC-induction-dabe}
+For any nonempty set system $\cal F$ on $V$ and $v\in V$, the two set systems
+\[
+\{F \in \cal F ~|~F \text{ is $v$-positive}\} \text{ and } \{F \in \cal F ~|~F \text{ is $v$-negative}\}
+\]
+have VC-dimension strictly less than $\VCdim(\cal F)$.
+\end{lemma}
+
+\begin{corollary}\label{lem:blue-vc}
+Let $G=(A,B,E)$ be a bipartite graph. For any set of vertices $B' \subseteq B$ that are non isolated and twins in the positive (or negative) merge-graph of $G$, we have
+\[
+\VCdim(\inducedSS{B'}{A}) < \VCdim(\inducedSS{B}{A}).
+\]
+\end{corollary}
+
+\begin{lemma}\label{lem:merge_deg}
+For any class $\CC$ in DABE, there exists a $c_{\ref{lem:merge_deg}} := c_{\ref{lem:merge_deg}} (\CC)$ such that, for any bipartite graph $G = (A, B, E)$, the merge graph $M$, union of positive and negative merge graphs of $G$ is $c_{\ref{lem:merge_deg}}$-degenerate.
+\end{lemma}
+\begin{proof}
+TODO
+\end{proof}
+\subsection{Definable partitions and families of set systems}
+When $\Pp$ is a partition of $B$, then $(G, \Pp)$ induces the \remph{family of set systems} $(p/A)_{p \in \Pp}$ on $A$ that contains one set system for each part of $\Pp$. We say that the family is \remph{$k$-definable} whenever the partition is.
+
+\begin{lemma}\label{lem:partition_size}
+Let $\CC$ be in DABE and $k$ be an integer. Then there is a constant $c_{\ref{lem:partition_size}}(\CC, k) $ such that
+for any bipartite graph $G = (A, B, E) \in \CC$, and any $k$-definable partition $\Pp$ of $B$, we have $\sum_{p \in \Pp} |p/A| \leq c_{\ref{lem:partition_size}}(\CC, k) \cdot (|\Pp| + |B/A|)$.
+\end{lemma}
+\begin{proof}
+Indeed, $\Pp$ is a k-definable partition, and the partition $B/A$ of $B$ in twin classes over $A$ is definable with one color marking and one quantifier:
+\[
+\varphi_{B/A} (u, v) := \forall a, A(a) \implies E(ua) \Leftrightarrow E(va).
+\]
+Hence, by \Cref{cor:2equiv_ref}, there exists a constant $c(\CC, k)$ such that $|\Pp \wedge B/A| \leqslant c(\CC, k) \cdot (|\Pp| + |B/A|)$.
+Note that $\sum_{p \in \Pp} |p/A|$ corresponds exactly to the counting of the refined classes of $\Pp \wedge B/A$, proving the lemma.
+\end{proof}
+
+
+\subsection{Distillation procedure}
+When we will do the main induction on some $k$-definable families of set systems $(\inducedSS{p}{A})_{p \in \Pp}$, we will build the hamming graphs induced by $A$ in each $\inducedSS{p}{A}$, that is the graphs $\hamming(\inducedSS{p}{A})$. In particular, we will need that the total number of hamming edges $\sum_{p \in \Pp} |E(\hamming(\inducedSS{p}{A}))|$ is as big as possible.
+
+The goal of the next lemma is to show that, up to a reasonable loss in the set systems sizes, $\sum_{p \in \Pp} |E(\hamming(\inducedSS{p}{A}))| \ge \Omega_{\CC, k}(\sum_{p \in \Pp} |\inducedSS{p}{A}|)$.
+
+We say that a bipartite graph $G = (A, B, E) \in \CC$ has \remph{maximal complexity} if it is twin-free and for any bipartite graph $G' = (A', B', E') \in \CC$ with $|A'| \leq |A|$ we have
+\[
+\frac{|B'/A'|}{|A'|} \leq \frac{|B/A|}{|A|}
+\]
+
+\begin{lemma}[Distillation procedure]\label{lem:distil}
+For any class $\CC$ in DABE and integer $k$, there is a constant
+$c_{\ref{lem:distil}}(\CC, k)$ such that for any $\alpha > 0$, the following holds.
+
+For any bipartite $G = (A, B, E) \in \CC$ of maximal complexity, for any $B' \subseteq B$ such that $B'/A \geqslant \alpha \cdot B/A$ and $k$-definable partition $\Pp$ of $B'$ with $|\Pp| \leqslant |B'|/4 c_{\ref{lem:partition_size}}$,
+there is an $A' \subseteq A$, with $|A'| \geq c_{\ref{lem:distil}}(\CC, k) \cdot |A|$ such that  
+\[
+\sum_{P \in \Pp} |E(\hamming(\inducedSS{P}{A'}))| \ge
+\alpha c_{\ref{lem:distil}}(\CC, k) \cdot \sum_{P \in \Pp} |P/A| = \alpha c_{\ref{lem:distil}}(\CC, k) \cdot |B'|.
+\]
+\end{lemma}
+
+\begin{proof}
+%Note that, since $B$ is twin-free, $|B'| := \sum_{P \in \Pp} |P/A|$.
+We shrink $A$ to $A'$ iteratively. Set initially $X := A$. As long as there is a vertex $v \in X$ such that 
+\[
+\sum_{P \in \Pp}|\inducedSS{P}{X}| - |\inducedSS{P}{X - v}| \leq \frac{|B'|}{2|A|}
+\]
+remove $v$ from $X$ and repeat. Otherwise, if there is no such $v$, terminate.
+\begin{claim}
+At the end of the process $|X| > c \cdot |A| $ for 
+$c := \frac{\alpha}{8c_{\ref{lem:partition_size}}}$.
+\end{claim}
+\begin{proof}
+By contradiction, assume that eventually the process reaches a set $X$ of size $c \cdot |A|$.
+Let $k := (1-c) \cdot |A|$ and $v_1, \dots, v_{k}$ be the vertices removed iteratively by the process.
+We have that
+
+\begin{align*}
+\sum_{P \in \Pp}|\inducedSS{P}{X}| = \sum_{P \in \Pp}|\inducedSS{P}{A}|
+  &- \sum_{P \in \Pp}\left( |\inducedSS{P}{A}| - |\inducedSS{P}{A - v_1}|\right) - \dots \\
+  &- \sum_{P \in \Pp}\left( |\inducedSS{P}{A - \{v_1, \dots, v_{k-1}\}}| - |\inducedSS{P}{A - \{v_1, \dots, v_{k}\}}|\right).
+\end{align*}
+In particular, $\sum_{P \in \Pp}|\inducedSS{P}{X}| \ge |B'| - k \cdot \frac{|B'|}{2|A|} \geq |B'|/2$.
+By \Cref{lem:partition_size}, we know that $\sum_{P \in \Pp}|\inducedSS{P}{X}| \leqslant c_{\ref{lem:partition_size}} (|\Pp| + |B'/X|)$.
+This gives 
+\[
+\frac{|B'|}{4}
+\leqslant
+\frac{|B'|}{2} - c_{\ref{lem:partition_size}} |\Pp|
+\leqslant
+\sum_{P \in \Pp}|\inducedSS{P}{X}| - c_{\ref{lem:partition_size}} |\Pp|
+\leqslant c_{\ref{lem:partition_size}} |B'/X|
+\]
+Since $|X| = c \cdot |A|$, we have
+\[
+\frac{|B'/X|}{|X|}
+\geqslant
+\frac{|B'|}{4 c_{\ref{lem:partition_size}} |X|} \geqslant
+\frac{\alpha |B|}{4 c_{\ref{lem:partition_size}} \frac{\alpha}{8 c_{\ref{lem:partition_size}}} |A|} \geqslant \frac{2|B|}{|A|}.
+\]
+This contradicts the maximality of $G$.
+\end{proof}
+Let $A'$ be the set $X$ on which the process stops.
+We have
+\[
+\sum_{P \in \Pp} |E(\hamming(\inducedSS{P}{A'}))| = \sum_{a \in A'} \sum_{P \in \Pp} |P/A'| - |P/A' - a| \geqslant \frac{|A'| \cdot |B'|}{2|A|}
+\geqslant \frac{\alpha}{8 c_{\ref{lem:partition_size}}}|B'|
+\]
+It remains to fix $c_{\ref{lem:distil}} := 1/8c_{\ref{lem:partition_size}}$ to conclude.
+\end{proof}
+
+\subsection{Sparsification}
+
+\begin{definition}
+  Let $G=(A,B,E)$ be a bipartite graph and $k\in\N$.
+  A \remph{$k$-sparsification} consists of:
+  \begin{itemize}
+    \item sets $A_0\subseteq A$ and $B_0\subseteq B$, and
+    \item functions $f_1,\ldots,f_k\from B_0\to A$,
+  \end{itemize}
+  such that
+  the mapping $b\mapsto (N(b)\cap A_0,f_1(b),\ldots,f_k(b))$ is an injection from $B_0$ to $2^{A_0} \times A^k$.
+For such a $k$-sparsification we define:
+\begin{itemize}
+  \item The \emph{associated partition} $\cal P$ as the partition of $B_0$ such that two vertices $b,b'$ are in the same part of $\cal P$ if and only if 
+  $f_j(b)=f_j(b')$ for all $j=1,\ldots,k$. Note that vertices in the same part of $\cal P$ have pairwise distinct neighborhoods in $A_0$;
+  \item The \emph{size} as $s=|B_0|$;
+  \item The \emph{dimension} as $\max_{P\in\cal P} \VCdim(\inducedSS{P}{A_0})$; and
+  \item The \emph{complexity} as the least $c\ge0$ such that there are first-order formulas $\phi_1(x,y),\ldots,\phi_k(x,y)$ of quantifier rank ${\le}c$, each using ${\le}c$ unary predicates, and there is an expansion $G'$ of $G$ with $c$ unary predicates,
+  such that $\phi_j$ defines $f_j$ in $G'$ for $j=1,\ldots,k$, so that 
+  \[
+    f_j(b)=a\iff G'\models \phi_j(b,a)
+    \quad
+    \text{for all $b\in B_0$ and $a\in A$.}  
+  \]
+\end{itemize}
+When the input graph comes from a DABE class $\CC$, we say that a sparsification is \remph{terminal} if its size $s$ and
+associated partition $\Pp$ satisfy $s\le 4 c_{\ref{lem:partition_size}} \cdot|\Pp|$, and
+\remph{nonterminal} otherwise.
+\end{definition}
+
+
+Note that any bipartite graph with no twins in $B$ has a trivial $0$-sparsification ($A_0=A$, $B_0=B$, no functions) of size $|B|$, complexity $0$, and dimension $\VCdim(\inducedSS{B}{A})$.
+
+We prove the following, for bipartite graphs $G$ of maximal complexity from a class $\CC$ in DABE:
+\begin{enumerate}
+  \item a nonterminal $k$-sparsification can be improved to a $(k+1)$-sparsification with strictly smaller dimension, by losing only a constant factor depending only on $\CC$, and increasing the complexity only by a constant (\Cref{lem:step});
+  \item repeating this argument, we reach a terminal sparsification after at most $d$ steps, where $d$ upper bounds the VC-dimension of every $G$ in $\CC$ (\Cref{lem:iterate});
+  \item  a terminal $k$-sparsification of $G\in \CC$ of bounded complexity has size $s\le |A|\cdot \subpoly_{\BB,k}(|A|)$ (\Cref{lem:terminal}).
+\end{enumerate}
+Combining these three points yields a terminal $k$-sparsification with $k\le d$ and size $s$ satisfying
+$$\text{const}(\CC) \cdot |B| \le s \le \text{CONST}(\CC) \cdot |A|.$$
+Where $\text{const}(\CC) > 0$.
+This proves the inequality \eqref{eq:bip-version} in \Cref{lem:nc}. We now prove the necessary lemmas.
+
+
+\begin{lemma}\label{lem:transduce}
+  For every $k,c\in\N$ there is a transduction $T_{k,c}$ with the following property.
+  Let $G=(A,B,E)$ be a bipartite graph with a $k$-sparsification 
+   of complexity $c$, consisting of sets 
+   $A_0\subseteq A,B_0\subseteq B$ and functions $f_1,\ldots,f_k\from B_0\to A$.
+   Consider the bipartite graph $H=(A,B_0,E')$
+with $N_H(b)=\setof{f_j(b)}{j\in[k]}$ for $b\in B_0$.
+Then $H\in T_{k,c}(G)$.
+\end{lemma}
+
+\begin{lemma}\label{lem:terminal}
+  Let $\BB$ be a monadically dependent class of bipartite graphs and let $k,c\in\N$.
+  Let $G=(A,B,E)\in\BB$ have a terminal $k$-sparsification of complexity at most $c$ and size $s$.
+  Then
+  \[
+    s\le c_{\ref{lem:terminal}}(\CC, k, c) \cdot |A|.
+  \]
+\end{lemma}
+\begin{proof}
+Let $A_0\subseteq A$, $B_0\subseteq B$, and $f_1,\ldots,f_k\from B_0\to A$
+witness the given $k$-sparsification,
+and let $\cal P$ be the associated partition. We prove that $|\cal P|\le c \cdot |A|$ for some constant $c := c(\CC, k, c)$, which will imply the claim as $s\le 4 c_{\ref{lem:partition_size}} \cdot |\cal P|$ by terminality.
+Choose a set $B^*\subseteq B_0$ containing exactly one vertex from each part of the associated partition
+$\cal P$.
+
+By \Cref{lem:transduce}, there is a transduction $T_{k,c}$ such that the
+bipartite graph $H_0$ with parts $A$ and $B_0$ and
+edges $\setof{\set{b,f_j(b)}}{b\in B_0,j\in[k]}$ 
+belongs to $T_{k,c}(G)$.
+Since transductions allow taking induced subgraphs, the graph
+$H\coloneqq H_0[A\cup B^*]$ also belongs to $T_{k,c}(G)$.
+
+Each vertex of $B^*$ has degree at most $k$ in $H$, so $H$ is
+$K_{k+1,k+1}$-free.
+Moreover, distinct vertices of $B^*$ lie in different parts of $\cal P$, hence
+their tuples
+\[
+  (f_1(b),\ldots,f_k(b))
+\]
+are pairwise distinct.
+Therefore, for every set $S\subseteq A$, there are at most $|S|^k$ vertices
+$b\in B^*$ with $N_H(b)=S$, because each coordinate of the above tuple must
+then belong to $S$.
+Since every such $S$ has size at most $k$, there are in fact at most
+$k^k$ such vertices (with $0^0=1$). Consequently, 
+\[
+  |\cal P|=|B^*|
+  \le k^k\cdot \Big|\setof{N_H(b)}{b\in B^*}\Big|.
+\]
+
+Since $\CC$ is in DABE, and $T_{k,c}(\CC)$ is weakly sparse, we have that $T_{k,c}(\CC)$ is of bounded expansion. In particular \Cref{thm:bddexp2nc} yields
+\[
+  \Big|\setof{N_H(b)}{b\in B^*}\Big|
+  =\Big|\setof{N_H(b)\cap A}{b\in B^*}\Big|
+  \le c(\CC, k, c) \cdot |A|.
+\]
+The two inequalities,
+together with $s\le 4 c_{\ref{lem:partition_size}} \cdot |\cal P|$,
+prove the
+statement.
+\end{proof}
+
+\section{Main induction}
+\begin{lemma}\label{lem:step}
+  Suppose $G=(A,B,E) \in \CC$ is of maximal complexity, and has a nonterminal $k$-sparsification of size $s > \alpha \cdot |B|$,
+  dimension $d$, and complexity $c$.
+  Then there is a $(k+1)$-sparsification of $G$ with:
+  \begin{itemize}
+    \item size at least $\alpha /c_{\ref{lem:step}} \cdot s$,
+    \item dimension at most $d-1$,
+    \item complexity at most $c+5$.
+  \end{itemize}
+  where $c_{\ref{lem:step}} := c_{\ref{lem:step}}(\CC, k, d, c, \alpha)$ is independent of $G$.
+\end{lemma}
+\begin{proof}
+Let $A_0\subseteq A$, $B_0\subseteq B$, and $f_1,\ldots,f_k\from B_0\to A$
+witness the given $k$-sparsification.
+Let $\cal P$ be its associated partition.
+Since the sparsification is nonterminal, we have $s>4 c_{\ref{lem:partition_size}} \cdot |\cal P|$.
+For every part $P\in\cal P$, the functions $f_1,\ldots,f_k$ are constant on $P$,
+so the injectivity condition in the definition of a sparsification implies that
+the map $b\mapsto N_G(b)\cap A_0$ is injective on $P$.
+Therefore,
+\[
+  |\inducedSS{P}{A_0}|=|P|
+  \qquad\text{for every }P\in\cal P,
+\]
+and hence
+\[
+  \sum_{P\in\cal P}|\inducedSS{P}{A_0}|=\sum_{P\in\cal P}|P|=|B_0|=s.
+\]
+In particular, $d\ge 1$, since otherwise every set system $\inducedSS{P}{A_0}$
+would have VC-dimension $0$ and hence size $1$, contradicting
+$s>4 c_{\ref{lem:partition_size}} \cdot |\cal P|$.
+In particular, $|A_0|>1$, since otherwise every set system $\inducedSS{P}{A_0}$
+would have size at most $2$, again contradicting $s>4 c_{\ref{lem:partition_size}} \cdot|\cal P|$.
+
+Apply \cref{lem:distil} to the graph $G$, which is of maximal complexity, the subset $B_0 \subseteq B$ and the partition
+$\cal P$ of $B_0$. Since
+\[
+  \sum_{P\in\cal P}|\inducedSS{P}{A_0}|=s>4 c_{\ref{lem:partition_size}} \cdot|\cal P|, \text{ and } |B_0| \ge \alpha |B|
+\]
+we obtain a set $A_1\subseteq A_0$ such that
+\begin{equation}\label{eq:step-many-hamming-edges}
+  \sum_{P\in\cal P}|E(\hamming(\inducedSS{P}{A_1}))|
+  \ge \alpha c_{\ref{lem:distil}} \cdot s.
+\end{equation}
+
+Choose a set $B^*\subseteq B_0$ so that for each part $P\in\cal P$,
+\[
+  \inducedSS{(P\cap B^*)}{A_1}=\inducedSS{P}{A_1}
+\]
+and no two vertices in $P\cap B^*$ have equal neighborhoods in $A_1$.
+Thus, the map $b\mapsto N_G(b)\cap A_1$ is a bijection from $P\cap B^*$ to
+$\inducedSS{P}{A_1}$.
+
+For each $P\in\cal P$, let $H_P$ be the Hamming graph of
+$\inducedSS{P}{A_1}$, with vertex set identified with $P\cap B^*$ (identified using the previously constructed bijection between the two).
+Let $H^*$ be the disjoint union of the graphs $H_P$, for $P\in\cal P$.
+Then $V(H^*)=B^*$ and, by \eqref{eq:step-many-hamming-edges},
+\[
+  |E(H^*)|
+  =\sum_{P\in\cal P}|E(H_P)|
+  \ge \alpha c_{\ref{lem:distil}} \cdot s.
+\]
+
+For each $P\in\cal P$, let $M_P^+$ and $M_P^-$ denote the positive and
+negative merge graphs of $\inducedSS{P}{A_1}$.
+Let $M^+$ and $M^-$ be the disjoint unions of the graphs
+$M_P^+$ and $M_P^-$, respectively, identified along the common part $A_1$.
+As $A_1\subset A_0$,
+% \By \Cref{obs:vc-hereditary},
+ we have $\VCdim(\inducedSS{P}{A_1})\le \VCdim(\inducedSS{P}{A_0})\le d$ for every $P\in\cal P$.
+Then \Cref{cor:hamming} implies that $H_P$ has at least $|E(H_P)|/d$
+non-isolated vertices.
+Summing over $P\in\cal P$, we infer that $H^*$ has at least
+\[
+  \frac{|E(H^*)|}{d}
+  \ge \frac{\alpha  c_{\ref{lem:distil}}}{d} \cdot s
+\]
+non-isolated vertices.
+Every such vertex is non-isolated in at least one
+of $M^+$ and $M^-$, so for some $\sigma\in\set{+,-}$ the graph $M^\sigma$
+has at least
+\begin{equation}\label{eq:step-many-nonis}
+  \frac{\alpha  c_{\ref{lem:distil}}}{2d} \cdot s
+\end{equation}
+non-isolated vertices in $B^*$.
+
+We now choose a large subset on which each vertex has a unique
+$M^\sigma$-neighbor.
+By \Cref{lem:merge_deg}, the graph $M^{\sigma}$ is $c_{\ref{lem:merge_deg}}$-degenerate. We apply \cref{lem:dreier-sampling-lin} to the bipartite graph obtained
+from $M^\sigma$ by removing the isolated vertices. % from $B^*$.
+We obtain sets $A_1'\subseteq A_1$ and $B_1\subseteq B^*$ such that every
+vertex of $B_1$ has exactly one neighbor in $A_1'$ in $M^\sigma$, and
+\begin{equation}\label{eq:after_sampling}
+  |B_1|
+  \ge c_{\cref{eq:after_sampling}} \cdot s, \text{ with } c_{\cref{eq:after_sampling}} := c_{\ref{lem:dreier-sampling-lin}}
+    (c_{\ref{lem:merge_deg}})
+    \cdot \frac{\alpha c_{\ref{lem:distil}}} {2d}.
+\end{equation}
+
+Define $f_{k+1}\from B_1\to A_1'$ by mapping each $b\in B_1$ to its unique
+neighbor in $A_1'$ in the graph $M^\sigma$.
+Let $\cal P_1$ be the family of all nonempty sets of the form
+$f_{k+1}^{-1}(v)\cap P$, where $P\in\cal P$ and $v\in A_1'$.
+
+We claim that $A_1$, $B_1$, and the functions
+$f_1,\ldots,f_k,f_{k+1}$ form a $(k+1)$-sparsification of $G$.
+Indeed, if $b,b'\in B_1$ lie in different parts of $\cal P$, then
+$(f_1(b),\ldots,f_k(b))\neq (f_1(b'),\ldots,f_k(b'))$.
+If they lie in the same part $P\in\cal P$, then 
+$N_G(b)\cap A_1\neq N_G(b')\cap A_1$ whenever $b\neq b'$.
+This is because we have chosen $B^* \supseteq B_1$ such that all vertices in $P \cap B^*$ have pairwise different neighborhoods on $A_1$ in $G$.
+Hence, the map
+\[
+  b\mapsto (N_G(b)\cap A_1,f_1(b),\ldots,f_k(b),f_{k+1}(b))
+\]
+is injective on $B_1$.
+Moreover, by construction, $\cal P_1$ is exactly the associated partition of
+this new sparsification.
+
+We now verify the claimed properties.
+First, let $P'\in\cal P_1$.
+Then $P'=f_{k+1}^{-1}(v)\cap P$ for some $P\in\cal P$ and $v\in A_1'$.
+The set system $\inducedSS{P'}{A_1}$ is a subfamily of the neighborhood of $v$
+in the $\sigma$-merge graph of $\inducedSS{P}{A_1}$, so
+\Cref{lem:blue-vc} yields
+\[
+  \VCdim(\inducedSS{P'}{A_1})\le \VCdim(\inducedSS{P}{A_1}) - 1 \le \VCdim(\inducedSS{P}{A_0}) - 1 \le d-1,
+\]
+where the second inequality holds as $A_1\subset A_0$.
+Thus, the new sparsification has dimension at most $d-1$.
+Second, the size of the new sparsification is
+\[
+  s'\coloneqq |B_1|,
+\]
+and by the choice of $B_1$ we have
+\[
+  s' \ge c_{\cref{eq:after_sampling}} \cdot s.
+\]
+
+Finally, let $G'$ be an expansion of $G$ witnessing that the original
+$k$-sparsification has complexity $c$,
+and let $\phi_1,\ldots,\phi_k$ be formulas defining
+$f_1,\ldots,f_k$ in $G'$.
+Expand $G'$ further by five unary predicates marking the sets
+$A_1$, $A_1'$, $B_1$, $B^*$, and a set $S$ which is all of $V(G)$ if
+$\sigma=+$ and empty if $\sigma=-$.
+Using the formulas $\phi_1,\ldots,\phi_k$, the relation of belonging to the
+same part of $\cal P$ is first-order definable with quantifier rank at most
+$c+1$.
+Consequently, the edge relation of $M^\sigma$ on $B^*\times A_1$ is also
+first-order definable with quantifier rank at most $c+2$:
+for $b\in B^*$ and $a\in A_1$, we ask whether there exists
+$b'\in B^*$ in the same part of $\cal P$ such that
+$N_G(b)\cap (A_1-\set{a})=N_G(b')\cap (A_1-\set{a})$ and
+$b,b'$ differ on $a$ in the direction prescribed by $\sigma$.
+Restricting this relation to $B_1\times A_1'$ gives a formula defining the
+function $f_{k+1}$, of quantifier rank at most $c+2$.
+Thus the new sparsification has complexity at most $c+5$.
+(We only used quantifier rank $c + 2$, but $c+5$ many unary predicates.)
+\end{proof}
+
+\begin{lemma}\label{lem:iterate}
+  Let $\CC$ a class in DABE. Let $d$ be the VC-dimension of $\CC$. Then there exists a constant $c_{\ref{lem:iterate}} := c_{\ref{lem:iterate}}(\CC)$ such that, for any bipartite graph $G=(A,B,E)$ of $\CC$ of maximal complexity, with
+  $|A|>1$, and with $B\neq\emptyset$.
+  Then for some $i\le d$, the graph $G$ has a terminal $i$-sparsification 
+  of complexity at most $5i$ 
+  and size $s$ such that
+  \[
+    s\ge c_{\ref{lem:iterate}} \cdot |B|.
+  \]
+\end{lemma}
+\begin{proof}
+  Set $n\coloneqq|A|$ and $m\coloneqq|B|$.
+Let $\mathbf S_0$ be the trivial $0$-sparsification of $G$, given by
+$A_0\coloneqq A$ and $B_0\coloneqq B$.
+Since there are no twins in $B$, this is indeed a sparsification, with
+size $s_0=m$, dimension at most $d$, and complexity $c_0=0$.
+For $j=0,1,2,\ldots$, construct $\mathbf S_j$ recursively as follows.
+Write $s_j$, $d_j$, and $c_j$ for the size, dimension, and
+complexity of $\mathbf S_j$, and write $\cal P_j$ for its associated
+partition. Finally, let $\alpha_j := s_j/m$
+
+If $\mathbf S_j$ is terminal, or if $j=d$, stop and set $i\coloneqq j$.
+Otherwise, \Cref{lem:step} yields a $(j+1)$-sparsification
+$\mathbf S_{j+1}$ of size $s_{j+1}$ and complexity $c_{j+1}$ such that
+\[
+  s_{j+1}
+  \ge c_{\ref{lem:step}}(\alpha_j) \cdot s_j,
+\]
+while $c_{j+1}\le c_j+5$ and $d_{j+1}\le d_j-1$.
+
+Let $0 \leq i \leq d$ be the index for which the above construction stops.
+Repeated application of the above bounds
+gives
+\[
+  s_i\ge c_{\ref{lem:step}}(c_{\ref{lem:step}}(\dots (1))\dots) \cdot m
+  \qquad\text{and}\qquad
+  c_i\le 5i\qquad\text{and}\qquad d_i\le d-i.
+\]
+We argue that $\mathbf S_i$ is terminal,
+which will yield the conclusion for $s\coloneqq s_i$ and $c_{\ref{lem:iterate}} := c_{\ref{lem:step}}^d(1)$, where $c_{\ref{lem:step}}$ is seen as a simple function its parameter $\alpha$.
+
+If $i<d$, then $\mathbf S_i$ is terminal by construction.
+Suppose now that $i=d$.
+Then $\mathbf S_d$ has dimension~$0$.
+Let $P\in\cal P_d$.
+By definition of the associated partition, the functions
+$f^d_1,\ldots,f^d_d$ are constant on $P$.
+Since $\mathbf S_d$ is a sparsification, the map
+$b\mapsto N_G(b)\cap A_d$ is injective on~$P$. 
+Hence, the vertices of $P$ have pairwise different neighborhoods on $A_d$, and we have $|\inducedSS{P}{A_d}| = |P|$.
+Furthermore, as $d_i=0$, the set system $\inducedSS{P}{A_d}$ has VC-dimension $0$,
+and hence size $1$.
+Thus, also $|P|=1$ for every $P\in\cal P_d$, and therefore
+\[
+  s_d=|B_d|=|\cal P_d|\le 4c_{\ref{lem:partition_size}} \cdot |\cal P_d|.
+\]
+So $\mathbf S_d$ is terminal as well.
+\end{proof}
+
+We now prove our main theorem.
+
+\begin{theorem}
+Let $\CC$ be a class in the DABE, then it has linear neighborhood complexity.
+\end{theorem}
+\begin{proof}
+Fix now a graph $G=(A,B,E)\in\CC$, that has maximal complexity with $n\coloneqq |A| \ge 2$ and $m\coloneqq |B| \ge 1$.
+As $\CC$ is in DABE, the set system $\inducedSS{B}{A}$ has
+VC-dimension bounded by a constant $d$ depending only on~$\CC$.
+By \Cref{lem:iterate}, for some $i\le d$, the graph $G$ has a
+terminal $i$-sparsification of size $s$ and complexity at most $5i$ such
+that
+\[
+  s\ge c_{\ref{lem:iterate}} \cdot m.
+\]
+By \Cref{lem:terminal}, as $i\le d$, we have
+\[
+  s
+  \le c_{\ref{lem:terminal}} \cdot n.
+\]
+Combining the two inequalities, we obtain
+\[
+  m
+  \le \frac{c_{\ref{lem:terminal}}}{c_{\ref{lem:iterate}}} \cdot n.
+\]
+Since any graph $H$ of $\CC$ has a smaller neighborhood complexity thatn some graph $H$ of $\CC$ that has maximal complexity, the theorem follows.
+\end{proof}
+
+\end{document}
