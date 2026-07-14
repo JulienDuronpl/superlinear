@@ -217,9 +217,10 @@ The \remph{complexity} of a $(c, k, I)$-transduction $T$ is the maximum among $c
 When a transduction has complexity $\le k$, we call it a \remph{$k$-transduction}.
 It is well-known that the number of different $k$-transductions is finite (depending on $k$).
 
-Given a class $\CC$ of $\CC$, we define the \remph{closure by transduction} of $\CC$, denoted by $\Tcl(\CC)$, as the set of classes $\DD$ with $\DD \tf \CC$.
+Given a class $\CC$, we define the \remph{closure by transduction} of $\CC$, denoted by $\Tcl(\CC)$, as the set of classes $\DD$ with $\DD \tf \CC$.
 This paper is dedicated to understanding some set of transduction closed sets.
 
+A transduction $T$ of a class $\CC$ is \remph{size-preserving} when there exists a constant $c := c(\mathcal \CC, T)$ such that for any $G \in T(\CC)$, there exists a graph $H \in \CC$ such that $G \in T(H)$ and $|V(G)| \ge c \cdot |V(H)|$.
 \begin{definition}
 A class $\CC$ is Dependent we have $\mathcal G \not \tf \CC$ for $\mathcal G$ the class of all graphs.
 \end{definition}
@@ -227,6 +228,11 @@ A class $\CC$ is Dependent we have $\mathcal G \not \tf \CC$ for $\mathcal G$ th
 \begin{definition}
 The Dense Analogue of Bounded Expansion (DABE) is the set of classes of graphs $\CC$ such that, for any non degenerate sparse class $\DD$, we have $\DD \not \tf \CC$.
 \end{definition}
+
+\begin{definition}
+The Weak Dense Analogue of Bounded Expansion (W-DABE) is the set of classes of graphs $\CC$ such that, for any non degenerate sparse class $\DD$, no size-preserving transduction $T$ builds $\DD$ from $\CC$.
+\end{definition}
+
 It is known that the classes that are both sparse and in DABE are the classes of bounded expansion.
  
 Note that DABE can be extended to any class of structures.
@@ -364,7 +370,8 @@ Let $G=(A,B,E)$ be a bipartite graph. For any set of vertices $B' \subseteq B$ t
 For any class $\CC$ in DABE, there exists a $c_{\ref{lem:merge_deg}} := c_{\ref{lem:merge_deg}} (\CC)$ such that, for any bipartite graph $G = (A, B, E)$, the merge graph $M$, union of positive and negative merge graphs of $G$ is $c_{\ref{lem:merge_deg}}$-degenerate.
 \end{lemma}
 \begin{proof}
-TODO
+Since $\CC$ is in DABE, it suffices to show that the merge graph is $K_{t, t}$-subgraph free.
+
 \end{proof}
 \subsection{Definable partitions and families of set systems}
 When $\Pp$ is a partition of $B$, then $(G, \Pp)$ induces the \remph{family of set systems} $(p/A)_{p \in \Pp}$ on $A$ that contains one set system for each part of $\Pp$. We say that the family is \remph{$k$-definable} whenever the partition is.
@@ -810,5 +817,83 @@ Combining the two inequalities, we obtain
 \]
 Since any graph $H$ of $\CC$ has a smaller neighborhood complexity thatn some graph $H$ of $\CC$ that has maximal complexity, the theorem follows.
 \end{proof}
+
+\section{Substructures of superlinear neighborhood complexity}
+
+\subsection{Projection bounds}
+
+When considering sets $X_1, \dots, X_d$, and $S \subseteq X_1 \times \dots \times X_d$ we define $\pi_{i, j}(S)$ as
+\[
+\{(x_i, x_j)~|~\exists x_k \text{ for } k \not \in \{i, j\} \text{ such that } (x_1, \dots, x_d) \in S\}.
+\]
+\begin{lemma}\label{lem:projection}
+For any integer $d$, there is a function $f : \N \to \N$ such that, for any finite sets $X_1, \dots, X_d$ and $S \subseteq X_1 \times \dots \times X_d$ with $|S| \ge f(c) \cdot (|X_1| + \dots + |X_d|)$,
+there are indices $i, j \in [d]$ and $Y_i \subset X_i$, $Y_j \subset X_j$ such that $\pi_{i, j}(S) \cap (Y_i \times Y_j) \ge c \cdot (|Y_i| + |Y_j|)$.
+\end{lemma}
+\begin{proof}
+  We let $f(c) \ge 2^{2c d^2} + c d^2$.
+  Without loss of generality, we assume the $X_i$ to be pairwise disjoint.
+  Let $s^1, \dots, s^n$ be an enumeration of the elements of $S$.
+  We denote by $s^i_j$ the $j$-th component of $s^i$.
+
+  We now build an auxiliary graph $G$ with vertex set $\bigcup_{i \in [d]} X_i$.
+  For each $s^i$, we add the edge $e(s^i)$ in the following way: let $(a, b)$ be the smallest pair of indices (for lexicographic order) such that $(s^i_a, s^i_b)$ is not yet an edge of $G$, and add $(s^i_a, s^i_b)$ to $E(G)$. If the pair does not exist, do nothing.
+  If $|E(G)| \ge c d^2 \cdot (|X_1| + \dots + |X_d|)$, then by the pigeonhole principle, there exists $i$ and $j$ such that $|E(G) \cap X_i \times X_j| \ge c \cdot (|X_i| + |X_j|)$.
+
+  Otherwise, for at least  $(f(c) - c d^2) \cdot (|X_1| + \dots + |X_d|)$ indices $i$, $\{s^i_1, \dots, s^i_d\}$ is a clique of $G$. Since all these cliques are disjoint, $G$ contains at least $2^{2c d^2}$ different cliques, and so is not $2c d^2$-degenerate.
+  Let $U$ be a set of vertices such that $E(G[U]) \ge c d^2 \cdot |U|$, and we can apply the same argument as the previous paragraph on $U$. 
+\end{proof}
+
+
+\section{On the road of main thm}
+\newcommand{\twins}[2]{\text{twins}(\inducedSS{#1}{#2})}
+
+Given two partitions $\PP$ and $\QQ$, we say they \remph{intersect $c$-linearly} when, for any $\PP' \subseteq \PP, \QQ' \subseteq \QQ$, we have 
+\[
+|\PP' \wedge \QQ'| \le c \cdot (|\PP'| + |\QQ'|).
+\]
+
+\begin{lemma}\label{lem:3-oartitions}
+Let $X$ be a set, let $\PP, \Qq, \mathcal R$ be three partitions on $X$, and $c \ge 0$.
+Assume that $\PP \wedge \QQ$ is a coarsening of $\PP \wedge \mathcal R$, and that $\PP$ and $\mathcal R$ intersect $c$-linearly.
+
+Then there exists constants $a_{\ref{lem:3-oartitions}} := a(c)$ and $b_{\ref{lem:3-oartitions}} := b(c)$ such that, if $|\Pp \wedge \QQ| \ge a_{\ref{lem:3-oartitions}} \cdot |\PP|$, there exists a choice $\pi(X)$ of representatives of $\mathcal R$, such that $|\PP \wedge \QQ \cap \pi(X)| \ge b_{\ref{lem:3-oartitions}} \cdot (|P \wedge Q|)$.
+\end{lemma}
+\begin{proof}
+Let $\cal L$ be the set of classes of $\cal R$ that intersect at least $2c$ different classes of $\PP$.
+Since $\PP$ and $\cal R$ intersect $c$-linearly we have that
+\[
+2c \cdot |\mathcal{L}| \le |\PP \wedge \mathcal{L}| \le c \cdot (|\PP| + |\mathcal L|).
+\]
+In particular, $|\mathcal L| \le |\PP|$, and $|\PP \wedge \mathcal{L}| \le 2c |\PP|$. 
+
+Since $\PP \wedge \QQ$ is a coarsening of $\PP \wedge \mathcal R$, each part of $\PP \wedge \QQ$ is a disjoint union of parts of $\PP \wedge \mathcal R$.
+Let $\mathcal S$ the subset of parts of $\PP \wedge \QQ$ that do not intersect $\mathcal L$, that is:
+\[
+\mathcal S := \{ S \in \PP \wedge \QQ ~|~ S \cap \bigcup_{L \in \mathcal L} L = \emptyset \}
+\]
+
+Separating the parts of $\PP \wedge \QQ$ by according to whether they contain an element of $\bigcup_{L \in \mathcal L} L$, we obtain the following inequality:
+\[
+|\mathcal S| + |\PP \wedge \mathcal L| = |\PP \wedge \mathcal Q| \ge  c' \cdot |P|,
+\]
+from which we obtain $|\mathcal S| \ge |\PP \wedge \mathcal Q| - 2c \cdot |\mathcal P| \ge 1/2 \cdot |\PP \wedge \mathcal Q|$.
+
+Now, for each part $R \in \mathcal R - \mathcal L$, we know that $R$ intersects less than $2c$ different parts of $\PP$.
+Hence, we can define a set $X_R \subset R$ containing less than $2c$ elements that hits all the intersections of the form $P \cap R$ for $P \in \PP$.
+Pick, for each $R \in \mathcal R - \mathcal L$, an element $x_R \in X_R$ independently and uniformly at random, and set $\pi(X) := \{ x_R ~|~ R \in \mathcal R - \mathcal L\}$.
+
+For each part $S \in \mathcal S$, we know that $S$ contains a part of the form $P \cap R$ for $P \in \PP$ and $R \in \mathcal R - \mathcal L$. In particular, $S$ intersects $X_R$. Hence the probability that $x_R \in S$ is more than $1/2c$.
+Since this applies to each part $S \in \mathcal S$, the expected number of parts $S \in \mathcal S$ with $S \cap \pi(X) \neq \emptyset$ is more than $1/2c \cdot |\mathcal S| \ge 1/4c \cdot |\PP \wedge \QQ|$.
+\end{proof}
+
+\section{Linearly intersecting partition version}
+\begin{lemma}\label{lem:merge_deg2}
+For any monadically dependent class $\CC$, there exists an integer $t$ such that, for any bipartite graph $G = (A, B, E)$, the merge graph $M$, union of positive and negative merge graphs of $G$ is $K_{t, t}$-subgraph free.
+\end{lemma}
+
+\begin{lemma}\label{lem:merge_graph_sp}
+For any hereditary class $\mathcal C$, the hereditary closure of the merge-graphs of $\mathcal C$ is transducable by a size preserving transduction.
+\end{lemma}
 
 \end{document}
